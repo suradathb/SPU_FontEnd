@@ -15,7 +15,7 @@ class Home extends React.Component {
       attendedEnrolledCount: 0,
       attendedEnrolledStudents: 0,
       names: [], // Input names for checking attendance
-      attendanceResult: [],
+      attendanceResult: null,
     }
   }
   componentDidMount() {
@@ -41,7 +41,9 @@ class Home extends React.Component {
 
   fetchNotEnrolledCount = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/std/v1/not-enrolled-names/')
+      const response = await axios.get(
+        'http://localhost:8000/api/std/v1/not-enrolled-names/',
+      )
       // Assuming the response.data contains the not enrolled students count
       this.setState({
         notEnrolledCount: response.data.not_enrolled_students.length,
@@ -67,7 +69,9 @@ class Home extends React.Component {
 
   fetchAttendedEnrolledCount = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/std/v1/attended-names/')
+      const response = await axios.get(
+        'http://localhost:8000/api/std/v1/attended-names/',
+      )
       // Assuming the response.data contains the not enrolled students count
       this.setState({
         attendedEnrolledCount: response.data.attended_students.length,
@@ -78,22 +82,44 @@ class Home extends React.Component {
   }
 
   handleInputChange = (event) => {
-    this.setState({ names: event.target.value.split(',').map(name => name.trim()) });
-  };
-
+    this.setState({
+      names: event.target.value,
+    })
+  }
   handleCheckAttendance = async () => {
-    const { names } = this.state;
     try {
-      const response = await axios.post('http://localhost:8000/api/std/v1/check-attendance/', { names:names });
-      // Assuming the response.data contains the attendance result
-      this.setState({ attendanceResult: response.data.attendance_result });
+      const { names } = this.state
+      if (!names) {
+        console.error('List of names is empty')
+        return
+      }
+      const namesArray = names.split(',').map((name) => name.trim())
+
+      if (namesArray.length === 0) {
+        console.error('List of names is empty')
+        return
+      }
+      
+      const response = await axios.post(
+        'http://localhost:8000/api/std/v1/check-attendance/',
+        namesArray,
+      )
+      this.setState({ attendanceResult: response.data.attendance_result })
+      window.location.reload();
     } catch (error) {
-      console.error('Error checking attendance:', error);
+      console.error('Error checking attendance:', error)
     }
-  };
+  }
 
   render() {
-    const { notEnrolledStudents,notEnrolledCount,attendedEnrolledCount,attendedEnrolledStudents,names, attendanceResult } = this.state
+    const {
+      notEnrolledStudents,
+      notEnrolledCount,
+      attendedEnrolledCount,
+      attendedEnrolledStudents,
+      names,
+      attendanceResult,
+    } = this.state
     return (
       <>
         <div className="wrapper">
@@ -133,7 +159,9 @@ class Home extends React.Component {
                     {/* <!-- small box --> */}
                     <div className="small-box bg-warning">
                       <div className="inner">
-                      {attendedEnrolledCount > 0 && <h3>{attendedEnrolledCount}</h3>}
+                        {attendedEnrolledCount > 0 && (
+                          <h3>{attendedEnrolledCount}</h3>
+                        )}
 
                         <p>จำนวณนักศึกษาที่เข้าเรียนแล้ว</p>
                       </div>
@@ -169,12 +197,31 @@ class Home extends React.Component {
                 {/* Small boxes (Stat box) */}
                 <div className="row">
                   <div className="col-lg-12">
-                  <div class="input-group input-group-sm">
-                  <input type="text" class="form-control" placeholder='ระบุชื่อ-นามสกุล โดยไม่มีคำนำหน้า เช่น "สวัสดี มีชัย"' value={names.join(',')} onChange={this.handleInputChange}/>
-                  <span class="input-group-append">
-                    <button type="button" onClick={this.handleCheckAttendance} class="btn btn-info btn-flat">นักศึกษาลงชื่อเข้าเรียน!</button>
-                  </span>
-                </div>
+                    <div className="input-group input-group-sm">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder='ระบุชื่อ-นามสกุล โดยไม่มีคำนำหน้า เช่น "สวัสดี มีชัย"'
+                        value={names}
+                        onChange={this.handleInputChange}
+                      />
+                      <span className="input-group-append">
+                        <button
+                          type="button"
+                          onClick={this.handleCheckAttendance}
+                          className="btn btn-info btn-flat"
+                        >
+                          <i className="fas fa-search"> </i>
+                          นักศึกษาลงชื่อเข้าเรียน !
+                        </button>
+                      </span>
+                      {attendanceResult && (
+                        <div>
+                          <h2>Attendance Result:</h2>
+                          <pre>{JSON.stringify(attendanceResult, null, 2)}</pre>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

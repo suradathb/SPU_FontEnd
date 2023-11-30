@@ -17,9 +17,9 @@ class Header extends React.Component {
           {/* <!-- Left navbar links --> */}
           <ul className="navbar-nav">
             <li className="nav-item">
-              <a className="nav-link" data-widget="pushmenu" href="#" role="button">
+              <Link className="nav-link" data-widget="pushmenu"  to="#" role="button">
                 <i className="fas fa-bars"></i>
-              </a>
+              </Link>
             </li>
             <li className="nav-item d-none d-sm-inline-block">
               <Link to="/" className="nav-link">

@@ -45,15 +45,12 @@ class UploadNames extends React.Component {
   handleUpload = async () => {
     try {
       const { file } = this.state
-
       if (!file) {
         console.error('Please select a file.')
         return
       }
-
       const formData = new FormData()
       formData.append('file', file)
-
       await axios.post(
         'http://localhost:8000/api/std/v1/upload-names/',
         formData,
@@ -119,11 +116,11 @@ class UploadNames extends React.Component {
                 <div className="row">
                   <div className="col-12">
                     <div className="card">
-                      <div class="card card-secondary">
-                        <div class="card-header">
-                          <h3 class="card-title">Upload and download report</h3>
+                      <div className="card card-secondary">
+                        <div className="card-header">
+                          <h3 className="card-title">Upload and download report</h3>
                         </div>
-                        <div class="card-body">
+                        <div className="card-body">
                           <div className="row">
                             <div className="col-lg-3 col-6">
                               <span className="btn btn-success col fileinput-button">
@@ -142,14 +139,14 @@ class UploadNames extends React.Component {
                                 <span>Upload Names</span>
                               </button>
                             </div>
-                            <div className="col-lg-3 col-6">
+                            {/* <div className="col-lg-3 col-6">
                               <button
                                 className="btn btn-warning col cancel"
                                 onClick={this.fetchAttendanceReport}
                               >
                                 Fetch Attendance Report
                               </button>
-                            </div>
+                            </div> */}
                             <div className="">
                               {fileUrl && (
                                 <div>
