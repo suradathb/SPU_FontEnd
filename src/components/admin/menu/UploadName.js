@@ -20,7 +20,7 @@ class UploadNames extends React.Component {
     this.fetchData()
     // Optionally, set up an interval to fetch data at regular intervals
     this.intervalId = setInterval(this.fetchData, 5000) // Fetch every 5 seconds, adjust as needed
-    this.fetchAttendanceReport()
+    // this.fetchAttendanceReport()
   }
 
   componentWillUnmount() {

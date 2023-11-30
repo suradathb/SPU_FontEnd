@@ -27,9 +27,9 @@ class Header extends React.Component {
               </Link>
             </li>
             <li className="nav-item d-none d-sm-inline-block">
-              <a href="#" className="nav-link">
-                Contact
-              </a>
+              <Link to="/config" className="nav-link">
+                Setup
+              </Link>
             </li>
           </ul>
 
