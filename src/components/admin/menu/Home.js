@@ -16,6 +16,8 @@ class Home extends React.Component {
       attendedEnrolledStudents: 0,
       names: [], // Input names for checking attendance
       attendanceResult: null,
+      showTableNot: false,
+      showTable: false,
     }
   }
   componentDidMount() {
@@ -99,18 +101,30 @@ class Home extends React.Component {
         console.error('List of names is empty')
         return
       }
-      
+
       const response = await axios.post(
         'http://localhost:8000/api/std/v1/check-attendance/',
         namesArray,
       )
       this.setState({ attendanceResult: response.data.attendance_result })
-      window.location.reload();
+      window.location.reload()
     } catch (error) {
       console.error('Error checking attendance:', error)
     }
   }
 
+  handleButtonClickNot = () => {
+    this.setState((prevState) => ({
+      showTable: !prevState.showTable,
+      showTableNot: false,
+    }))
+  }
+  handleButtonClick = () => {
+    this.setState((prevState) => ({
+      showTableNot: !prevState.showTableNot,
+      showTable: false,
+    }))
+  }
   render() {
     const {
       notEnrolledStudents,
@@ -168,7 +182,11 @@ class Home extends React.Component {
                       <div className="icon">
                         <i className="ion ion-person-add"></i>
                       </div>
-                      <a href="#" className="small-box-footer">
+                      <a
+                        href="#"
+                        onClick={this.handleButtonClick}
+                        className="small-box-footer"
+                      >
                         More info <i className="fas fa-arrow-circle-right"></i>
                       </a>
                     </div>
@@ -184,7 +202,11 @@ class Home extends React.Component {
                       <div className="icon">
                         <i className="ion ion-person-add"></i>
                       </div>
-                      <a href="#" className="small-box-footer">
+                      <a
+                        href="#"
+                        onClick={this.handleButtonClickNot}
+                        className="small-box-footer"
+                      >
                         More info <i className="fas fa-arrow-circle-right"></i>
                       </a>
                     </div>
@@ -215,13 +237,71 @@ class Home extends React.Component {
                           นักศึกษาลงชื่อเข้าเรียน !
                         </button>
                       </span>
-                      {attendanceResult && (
-                        <div>
-                          <h2>Attendance Result:</h2>
-                          <pre>{JSON.stringify(attendanceResult, null, 2)}</pre>
-                        </div>
-                      )}
                     </div>
+                  </div>
+                  <br />
+                  <div className="col-md-12">
+                    {this.state.showTable && (
+                      <table
+                        id="example2"
+                        className="table table-bordered table-hover"
+                      >
+                        {/* Your table content goes here */}
+                        <thead>
+                          <tr>
+                            <th>No</th>
+                            <th>Full-Name</th>
+                            <th>Status</th>
+                            {/* Add more headers as needed */}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {notEnrolledStudents.map(
+                            (stddata, index) =>
+                              stddata.name !== '' && (
+                                <tr key={index}>
+                                  <td>{index + 1}</td>
+                                  <td>{stddata.name}</td>
+                                  <td>{stddata.status}</td>
+                                  {/* Add more data rows as needed */}
+                                </tr>
+                              ),
+                          )}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                  <br />
+                  <div className="col-md-12">
+                    {this.state.showTableNot && (
+                      <table
+                        id="example2"
+                        className="table table-bordered table-hover"
+                      >
+                        {/* Your table content goes here */}
+                        <thead>
+                          <tr>
+                            <th>No</th>
+                            <th>Full-Name</th>
+                            <th>Status</th>
+                            {/* Add more headers as needed */}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {attendedEnrolledStudents.map(
+                            (stddatanot, index) =>
+                              stddatanot.name !== '' && (
+                                <tr key={index}>
+                                  <td>{index + 1}</td>
+                                  <td>{stddatanot.name}</td>
+                                  <td>{stddatanot.status}</td>
+                                  {/* Add more data rows as needed */}
+                                </tr>
+                              ),
+                          )}
+                        </tbody>
+                      </table>
+                    )}
                   </div>
                 </div>
               </div>

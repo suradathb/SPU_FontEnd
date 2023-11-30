@@ -12,6 +12,7 @@ class UploadNames extends React.Component {
       file: null,
       fileUrl: null,
       realTimeData: [],
+      newStudentName: '',
     }
   }
 
@@ -39,7 +40,9 @@ class UploadNames extends React.Component {
   }
 
   handleFileChange = (event) => {
-    this.setState({ file: event.target.files[0] })
+    this.setState({
+      file: event.target.files[0],
+    })
   }
 
   handleUpload = async () => {
@@ -78,9 +81,39 @@ class UploadNames extends React.Component {
       console.error('Error fetching attendance report:', error)
     }
   }
+
+  // Method to handle input change
+  handleInputChange = (event) => {
+    this.setState({ newStudentName: event.target.value })
+  }
+
+  // Method to add a new student
+  addNewStudent = async () => {
+    try {
+      const { newStudentName } = this.state
+      if (!newStudentName) {
+        console.error('List of names is empty')
+        return
+      }
+      // Make a POST request to the API endpoint
+      const response = await axios.post(
+        `http://localhost:8000/api/std/v1/add-new-student/?name=${newStudentName}`,
+      )
+      // Handle the response
+      console.log(response.data.message)
+      // You can perform additional actions after adding a new student if needed
+
+      // Clear the input field after successful addition
+      this.setState({ newStudentName: '' })
+      window.location.reload()
+    } catch (error) {
+      // Handle errors
+      console.error('Error adding new student:', error.message)
+    }
+  }
+
   render() {
-    const { realTimeData } = this.state
-    const { fileUrl } = this.state
+    const { realTimeData, newStudentName, fileUrl } = this.state
     return (
       <>
         <div className="wrapper">
@@ -118,7 +151,9 @@ class UploadNames extends React.Component {
                     <div className="card">
                       <div className="card card-secondary">
                         <div className="card-header">
-                          <h3 className="card-title">Upload and download report</h3>
+                          <h3 className="card-title">
+                            Upload and download report
+                          </h3>
                         </div>
                         <div className="card-body">
                           <div className="row">
@@ -139,14 +174,14 @@ class UploadNames extends React.Component {
                                 <span>Upload Names</span>
                               </button>
                             </div>
-                            {/* <div className="col-lg-3 col-6">
+                            <div className="col-lg-3 col-6">
                               <button
                                 className="btn btn-warning col cancel"
                                 onClick={this.fetchAttendanceReport}
                               >
                                 Fetch Attendance Report
                               </button>
-                            </div> */}
+                            </div>
                             <div className="">
                               {fileUrl && (
                                 <div>
@@ -160,7 +195,29 @@ class UploadNames extends React.Component {
                           </div>
                         </div>
                       </div>
-
+                      <div className="row">
+                        <div className="col-lg-12">
+                          <div className="input-group input-group-sm col-lg-6">
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder='ระบุชื่อ-นามสกุล โดยไม่มีคำนำหน้า เช่น "สวัสดี มีชัย"'
+                              value={newStudentName}
+                              onChange={this.handleInputChange}
+                            />
+                            <span className="input-group-append">
+                              <button
+                                type="button"
+                                onClick={this.addNewStudent}
+                                className="btn btn-info btn-flat"
+                              >
+                                <i className="fas fa-search"> </i>
+                                เพิ่มนักศึกษาเข้าระบบ
+                              </button>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                       {/* <!-- /.card-header --> */}
                       <div className="card-body">
                         <table
